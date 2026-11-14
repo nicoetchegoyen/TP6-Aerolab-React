@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
-import { consultar, modoDemo, tieneToken } from "./api.js";
+import { consultar, modoDemo, guardarClaveCanjes } from "./api.js";
 import Catalogo from "./Catalogo.jsx";
 import { ImagenProducto } from "./Producto.jsx";
 
@@ -103,6 +103,7 @@ export default function App() {
   const [ocupado, setOcupado] = useState(false);
   const [intento, setIntento] = useState(0);
   const bloqueo = useRef(false);
+  const [clave, setClave] = useState("");
   const ubicacion = useLocation();
   useEffect(() => {
     document.title =
@@ -204,6 +205,36 @@ export default function App() {
         )}
       </header>
       <main id="contenido" tabIndex="-1">
+        {!modoDemo && (
+          <details className="notice">
+            <summary>Acceso a canjes</summary>
+            <p>
+              Podés explorar el catálogo. Para canjear o agregar puntos, ingresá
+              la clave que te compartió el autor.
+            </p>
+            <form
+              onSubmit={(evento) => {
+                evento.preventDefault();
+                guardarClaveCanjes(clave);
+                setClave("");
+                setMensaje(
+                  "Clave cargada para esta sesión. El servidor la validará al realizar una operación.",
+                );
+              }}
+            >
+              <label htmlFor="clave-canjes">Clave de canjes</label>{" "}
+              <input
+                id="clave-canjes"
+                type="password"
+                autoComplete="off"
+                value={clave}
+                onChange={(evento) => setClave(evento.target.value)}
+                required
+              />{" "}
+              <button type="submit">Usar clave</button>
+            </form>
+          </details>
+        )}
         {usuario && (
           <div className="points-bar">
             <span>¿Te faltan puntos para tu próxima elección?</span>
@@ -250,10 +281,10 @@ export default function App() {
           <section className="notice" role="alert">
             <h1>No pudimos cargar el catálogo</h1>
             <p>{error}</p>
-            {!tieneToken && !modoDemo && (
+            {!modoDemo && (
               <p>
-                Configurá tu token según el README, o iniciá con{" "}
-                <code>npm run dev:demo</code> para practicar.
+                Revisá la configuración del servidor según el README, o iniciá
+                con <code>npm run dev:demo</code> para practicar.
               </p>
             )}
             <button onClick={() => setIntento(intento + 1)}>Reintentar</button>

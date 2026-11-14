@@ -1,4 +1,26 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap");
+
+.notice input {
+  font: inherit;
+  padding: 10px;
+  min-height: 44px;
+  max-width: 100%;
+  border: 1px solid #526965;
+}
+.notice summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.notice form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.notice input:focus-visible {
+  outline: 3px solid #b85518;
+  outline-offset: 3px;
+}
 :root {
   font-family: "DM Sans", sans-serif;
   color: #162d33;

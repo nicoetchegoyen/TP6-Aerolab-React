@@ -6,7 +6,6 @@ import { consultarDemo } from "../src/demo.js";
 test("Contrato HTTP de Aerolab: métodos, autenticación y errores", async () => {
   // Se prueba el servicio real, sustituyendo sólo la red; no se gastan puntos.
   process.env.VITE_DEMO_MODE = "false";
-  process.env.VITE_AEROLAB_TOKEN = "token-ficticio-para-pruebas";
   const servidor = await createServer({
     configFile: false,
     server: { middlewareMode: true },
@@ -14,7 +13,9 @@ test("Contrato HTTP de Aerolab: métodos, autenticación y errores", async () =>
   });
   const fetchOriginal = globalThis.fetch;
   try {
-    const { consultar } = await servidor.ssrLoadModule("/src/api.js");
+    const { consultar, guardarClaveCanjes } =
+      await servidor.ssrLoadModule("/src/api.js");
+    guardarClaveCanjes("clave-de-prueba");
     const solicitudes = [];
     globalThis.fetch = async (url, opciones) => {
       solicitudes.push({ url, opciones });
@@ -25,7 +26,7 @@ test("Contrato HTTP de Aerolab: métodos, autenticación y errores", async () =>
     await consultar("/user/points", { amount: 1000 });
     assert.equal(
       solicitudes[0].url,
-      "https://coding-challenge-api.aerolab.co/products",
+      "/.netlify/functions/aerolab?ruta=%2Fproducts",
     );
     assert.equal(solicitudes[0].opciones.method, "GET");
     assert.equal(solicitudes[1].opciones.method, "POST");
@@ -33,15 +34,20 @@ test("Contrato HTTP de Aerolab: métodos, autenticación y errores", async () =>
       productId: "producto-1",
     });
     assert.equal(
-      solicitudes[1].opciones.headers.Authorization,
-      "Bearer token-ficticio-para-pruebas",
+      solicitudes[1].opciones.headers["X-Clave-Canjes"],
+      "clave-de-prueba",
     );
     assert.deepEqual(JSON.parse(solicitudes[2].opciones.body), {
       amount: 1000,
     });
-    globalThis.fetch = async () => new Response("", { status: 401 });
-    await assert.rejects(consultar("/user/me"), /rechazó el token/);
-    globalThis.fetch = async () => new Response("", { status: 500 });
+    assert.equal(solicitudes[1].opciones.headers.Authorization, undefined);
+    globalThis.fetch = async () =>
+      Response.json(
+        { message: "Ingresá la clave de canjes correcta." },
+        { status: 401 },
+      );
+    await assert.rejects(consultar("/user/me"), /clave de canjes/);
+    globalThis.fetch = async () => Response.json({}, { status: 500 });
     await assert.rejects(consultar("/products"), /HTTP 500/);
     globalThis.fetch = async () => {
       throw new TypeError("sin red");

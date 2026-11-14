@@ -6,13 +6,13 @@
 2. **Netlify descarga esa rama.** La conexión ya existente con GitHub permite seleccionar el repositorio sin subir `node_modules` ni `.env`.
 3. **Instala las dependencias y ejecuta `npm run build`.** Vite transforma JSX y módulos en archivos que el navegador puede ejecutar.
 4. **Publica únicamente `dist`.** Allí están `index.html`, el JavaScript y el CSS resultantes. La URL pública sirve esos archivos; no ejecuta el servidor de desarrollo de Vite.
-5. **El navegador consulta Aerolab.** `fetch` conecta directamente con la API. Netlify aloja la interfaz; los productos, el saldo y los canjes vienen de Aerolab.
+5. **El navegador consulta la función de Netlify.** La función añade el token privado y consulta Aerolab. Los POST requieren además la clave de canjes.
 
 ## Configuración del proyecto
 
 `netlify.toml` deja versionados el comando de build, `dist`, Node 24, `VITE_DEMO_MODE=false` y el enlace real de GitHub.
 
-`VITE_AEROLAB_TOKEN` se carga en la sección de variables de Netlify. No se guarda su valor en Git. Las variables `VITE_` se incorporan a la build y son visibles en el navegador: aquí se usa sólo el token del challenge, que admite ese uso. No colocar contraseñas ni credenciales de otros servicios.
+`AEROLAB_TOKEN` y `AEROLAB_ACTION_KEY` se cargan como variables secretas de Netlify, disponibles para Functions. No tienen prefijo VITE_ y sus valores no se guardan en Git ni se incorporan al JavaScript público. Para hacer canjes se ingresa la clave adicional en la interfaz.
 
 Después de modificar una variable hace falta una build nueva: la build publicada no cambia por editar el valor en el panel.
 
@@ -29,6 +29,6 @@ Después de modificar una variable hace falta una build nueva: la build publicad
 
 ## Respuesta breve para el examen
 
-“Netlify toma mi rama main de GitHub y ejecuta la build de Vite con las variables configuradas. Publica la carpeta dist. La SPA corre en el navegador y consulta Aerolab con fetch y el token del challenge. React Router cambia las vistas y la API conserva saldo e historial.”
+“Netlify toma mi rama main de GitHub y ejecuta la build de Vite con las variables configuradas. Publica la carpeta dist. La SPA corre en el navegador y consulta una función de Netlify, que usa el token privado para llamar a Aerolab. Los canjes requieren una clave adicional. React Router cambia las vistas y la API conserva saldo e historial.”
 
 El resultado y la URL definitivos se registrarán después de comprobar el despliegue.
