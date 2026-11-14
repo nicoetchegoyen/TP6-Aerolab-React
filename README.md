@@ -2,6 +2,8 @@
 
 SPA React con JavaScript, React Router y CSS. El token de Aerolab se conserva en una función de servidor de Netlify y no se incorpora al JavaScript público.
 
+**Web pública:** https://tp6-aerolab-nicoetchegoyen.netlify.app/
+
 ## Cómo funciona
 
 1. React pide productos, usuario e historial a `/.netlify/functions/aerolab`.
@@ -48,7 +50,7 @@ Agregar `AEROLAB_TOKEN` y `AEROLAB_ACTION_KEY` en las variables de Netlify, disp
 | Diseño libre y responsive | CSS propio; imágenes provistas por Aerolab |
 | Historial, categorías y páginas | Implementados como mejoras de uso |
 | Enlace al código | Pie de página con el repositorio real |
-| Despliegue público | Registrar la URL y verificarla después de publicar |
+| Despliegue público | https://tp6-aerolab-nicoetchegoyen.netlify.app/; catálogo, detalle y protección de operaciones verificados |
 
 La fuente es `SPA - Aerolab.pdf` (2024), más los mínimos del [challenge histórico de recompensas](https://github.com/Aerolab/frontend-developer-coding-challenge/tree/2022). No se sigue el nuevo challenge de videojuegos. El PDF permite diseño propio.
 

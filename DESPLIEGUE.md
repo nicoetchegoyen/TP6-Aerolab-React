@@ -31,4 +31,6 @@ Después de modificar una variable hace falta una build nueva: la build publicad
 
 “Netlify toma mi rama main de GitHub y ejecuta la build de Vite con las variables configuradas. Publica la carpeta dist. La SPA corre en el navegador y consulta una función de Netlify, que usa el token privado para llamar a Aerolab. Los canjes requieren una clave adicional. React Router cambia las vistas y la API conserva saldo e historial.”
 
-El resultado y la URL definitivos se registrarán después de comprobar el despliegue.
+Publicado y comprobado el 14/11/2026: https://tp6-aerolab-nicoetchegoyen.netlify.app/
+
+Desde producción: GET de productos/perfil/historial HTTP 200; 32 productos, 2850 puntos y un canje. POST sin clave devuelve 401. POST con clave correcta y cantidad inválida devuelve 400, sin alterar el saldo. Los archivos públicos fueron revisados y no contienen ninguna de las dos credenciales. No se realizó otro canje ni otra carga de puntos en esta verificación.
