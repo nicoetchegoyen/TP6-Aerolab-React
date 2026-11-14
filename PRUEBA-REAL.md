@@ -23,7 +23,7 @@ También se abrió la aplicación con `npm run dev`, sin modo demo. Se mostraron
 
 Con autorización específica del titular se pulsó **+1.000 puntos**: POST `/user/points` funcionó y el saldo consultado al servidor pasó de **1850 a 2850 puntos**. El canje continuó registrado en el historial.
 
-Repositorio del proyecto: https://github.com/nicoetchegoyen/TP6-Aerolab-React. El despliegue público del sitio sigue pendiente.
+Repositorio del proyecto: https://github.com/nicoetchegoyen/TP6-Aerolab-React. Web pública: https://tp6-aerolab-nicoetchegoyen.netlify.app/
 
 ## Cómo explicarlo en el examen
 
@@ -33,3 +33,7 @@ Repositorio del proyecto: https://github.com/nicoetchegoyen/TP6-Aerolab-React. E
 - `useState` conserva los datos que ve la pantalla. Al actualizar el estado, React vuelve a renderizar.
 - Las rutas cambian la vista sin recargar todo el documento. El detalle usa el ID de la URL para buscar en el catálogo.
 - `.gitignore` evita versionar `.env`, pero las variables VITE_ se incorporan al cliente: no son secretos ocultos en el navegador.
+
+## Versión con token oculto y despliegue público
+
+El navegador ahora consulta una función de Netlify. La función lee AEROLAB_TOKEN en el servidor y exige AEROLAB_ACTION_KEY para POST. Se comprobaron tres pruebas automáticas, build sin credenciales y consultas reales a través de la función. En producción se obtuvieron los mismos 32 productos, 2850 puntos y un canje. Se verificó bloqueo 401 sin clave y validación 400 con clave correcta y cantidad inválida, sin nuevas operaciones que modifiquen el saldo.
