@@ -1,0 +1,6 @@
+node_modules/
+dist/
+# Las credenciales nunca se versionan. Sólo se comparten ejemplos sin token.
+.env*
+!.env.example
+!.env.demo
