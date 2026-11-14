@@ -17,7 +17,7 @@ El modo práctica usa productos ficticios, sin llamadas a Aerolab. El cartel lo 
 
 ## Conectar la API real
 
-Actualización del 14/11/2026: el generador funcionó, se recibió el token y la integración real devolvió HTTP 200 en perfil, catálogo e historial. Se verificó un canje real de 150 puntos. Ver `PRUEBA-REAL.md` para la evidencia y el recorrido de defensa. Las menciones a pruebas pendientes de la tabla original se complementan con ese registro; publicación y enlace de GitHub siguen pendientes.
+Actualización del 14/11/2026: el generador funcionó, se recibió el token y la integración real devolvió HTTP 200 en perfil, catálogo e historial. Se verificaron un canje de 150 puntos y una carga de 1000 puntos. Ver `PRUEBA-REAL.md` para la evidencia y el recorrido de defensa. Repositorio: [TP6-Aerolab-React](https://github.com/nicoetchegoyen/TP6-Aerolab-React). El despliegue público del sitio sigue pendiente.
 
 1. Obtener un token propio siguiendo las instrucciones del challenge. La [documentación oficial](https://aerolabchallenge.docs.apiary.io/) indica entrar en [Aerolab](https://aerolab.co/coding-challenge), escribir `join` y completar el correo. El correo de bienvenida contiene el token; revisar también spam. La consigna de 2024 usa el dominio anterior `aerolab.us`.
 2. Copiar `.env.example` como `.env` y completar `VITE_AEROLAB_TOKEN` sin la palabra `Bearer`.
@@ -35,16 +35,16 @@ Fuente: `SPA - Aerolab.pdf`, tres páginas. Se distingue su pedido del material 
 | Requisito | Código / comportamiento | Validación o pendiente |
 | --- | --- | --- |
 | SPA ReactJS | `main.jsx`, `App.jsx`, React Router | Compila |
-| Listado de todos los productos desde Aerolab | `GET /products`; filtros y páginas recorren el conjunto completo | UI comprobada en práctica; API real pendiente de token |
+| Listado de todos los productos desde Aerolab | `GET /products`; filtros y páginas recorren el conjunto completo | Verificados 32 productos con la API real |
 | Detalle en otra ruta | `#/productos/:id`, `Detalle` en `App.jsx` | Probado en navegador. La API no documenta detalle individual: se usa `find` sobre el catálogo |
-| Token de validación | `Authorization: Bearer ...` en `api.js` | Formato probado con red simulada; emisión y uso real pendientes |
+| Token de validación | `Authorization: Bearer ...` en `api.js` | Token propio recibido y verificado con HTTP 200 |
 | Diseño libre y recursos | CSS propio responsive; usa las imágenes que entregue la API | La consigna permite diseño propio. No se recibió la carpeta original |
 | App accesible en producción | `npm run build`, rutas con hash y base relativa | Build aprobado; falta publicar y comprobar la URL real |
 | Mínimos del challenge: precio, saldo, orden de precios | Tarjetas, cabecera, select de orden | Implementados; interfaz comprobada en práctica |
 | Distinguir canjeables y faltantes | Mensaje de disponibilidad, diferencia de puntos y botón deshabilitado | Comprobado en práctica |
-| Canjear y descontar puntos | POST `/redeem`, después GET `/user/me`; bloqueo durante la solicitud | Comprobado en práctica; contrato HTTP probado; operación real pendiente |
-| Agregar puntos | POST `/user/points`, sólo 1000, 5000 o 7500 | Comprobado en práctica y contrato HTTP |
-| Enlace al repositorio en el pie | `VITE_REPO_URL` | Falta crear el repositorio y completar una URL real |
+| Canjear y descontar puntos | POST `/redeem`, después GET `/user/me`; bloqueo durante la solicitud | Canje real Kobo Aura: 2000 - 150 = 1850 puntos; historial confirmado |
+| Agregar puntos | POST `/user/points`, sólo 1000, 5000 o 7500 | Carga real autorizada: 1850 + 1000 = 2850 puntos |
+| Enlace al repositorio en el pie | `VITE_REPO_URL` | URL real incluida en `.env.example` |
 | Mejoras: categorías, páginas, historial, móvil | `Catalogo.jsx`, `Historial`, CSS | Implementadas y revisadas según `VERIFICACION.md` del directorio superior |
 
 No se inventan descripciones: el detalle muestra nombre, imagen, categoría, costo y disponibilidad que provee el catálogo.
@@ -58,7 +58,7 @@ Cada carpeta es un proyecto independiente: se puede subir sólo ésta a un repos
 3. En Netlify seleccionar el repo, comando `npm run build`, directorio publicado `dist` y Node 24 (o compatible).
 4. Configurar allí `VITE_AEROLAB_TOKEN`, `VITE_DEMO_MODE=false` y `VITE_REPO_URL`. Ejecutar un nuevo despliegue después de cambiar variables.
 5. Abrir la URL pública y comprobar catálogo, ruta directa/recarga del detalle, saldo, canje e historial. Usar el token del ejercicio.
-6. Registrar los enlaces de GitHub y del despliegue. No se generaron enlaces reales en esta sesión.
+6. Registrar el enlace del despliegue. El código está en [GitHub](https://github.com/nicoetchegoyen/TP6-Aerolab-React); todavía falta publicar el sitio.
 
 Para revisar producción en tu computadora: `npm run build` y después `npm run preview`. Para repetir las pruebas del servicio: `npm test`. El Classroom está archivado: confirmar con el profesor dónde presentar hoy.
 

@@ -21,7 +21,9 @@ También se abrió la aplicación con `npm run dev`, sin modo demo. Se mostraron
 3. Se volvió a consultar GET `/user/me`: el saldo pasó de **2000 a 1850**.
 4. GET `/user/history` devolvió el canje y la interfaz mostró **Kobo Aura · 150 puntos**.
 
-La prueba de agregar puntos queda pendiente hasta obtener la autorización específica solicitada al titular. Crear el repositorio y publicar el sitio también siguen pendientes.
+Con autorización específica del titular se pulsó **+1.000 puntos**: POST `/user/points` funcionó y el saldo consultado al servidor pasó de **1850 a 2850 puntos**. El canje continuó registrado en el historial.
+
+Repositorio del proyecto: https://github.com/nicoetchegoyen/TP6-Aerolab-React. El despliegue público del sitio sigue pendiente.
 
 ## Cómo explicarlo en el examen
 
