@@ -1,0 +1,12 @@
+# Netlify descarga la rama main, compila la SPA y publica sólo dist.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"
+  VITE_DEMO_MODE = "false"
+  VITE_REPO_URL = "https://github.com/nicoetchegoyen/TP6-Aerolab-React"
+
+# VITE_AEROLAB_TOKEN se configura en Netlify; no se guarda en este archivo.
+# HashRouter usa rutas con # y no necesita una regla de reescritura.
