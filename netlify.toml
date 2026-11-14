@@ -8,5 +8,8 @@
   VITE_DEMO_MODE = "false"
   VITE_REPO_URL = "https://github.com/nicoetchegoyen/TP6-Aerolab-React"
 
-# VITE_AEROLAB_TOKEN se configura en Netlify; no se guarda en este archivo.
+[functions]
+  directory = "netlify/functions"
+
+# AEROLAB_TOKEN y AEROLAB_ACTION_KEY se configuran en Netlify (ámbito Functions).
 # HashRouter usa rutas con # y no necesita una regla de reescritura.

@@ -1,3 +1,11 @@
+# Actualización: token oculto en servidor
+
+El navegador llama a la función `netlify/functions/aerolab.mjs` mediante `src/api.js`. Sólo la función conoce `AEROLAB_TOKEN` y añade el encabezado Bearer al consultar Aerolab. La función permite sólo tres GET y dos POST; valida los datos y exige una clave adicional para POST. Un visitante puede explorar, pero no modificar el saldo sin esa clave. La clave de canjes se ingresa en la interfaz y se compara en el servidor; no es el token de Aerolab.
+
+Para practicar con la API real: iniciar `npm run dev`, abrir Acceso a canjes e ingresar el valor privado `AEROLAB_ACTION_KEY` del `.env`. Para presentar remotamente, compartir esa clave con el profesor por un canal privado. No mostrar `.env` en una captura pública.
+
+Los recorridos de React explicados abajo siguen siendo los mismos; donde se habla de la API, el navegador ahora pasa por la función de servidor. Las credenciales ya no usan variables VITE_.
+
 # Cómo defender Aerolab
 
 ## Explicación de un minuto
@@ -39,7 +47,7 @@
 
 **¿Qué hace la key?** Identifica de forma estable cada tarjeta para que React relacione los elementos entre renders.
 
-**¿El token está oculto por .env?** No: `VITE_` se incluye en el cliente. `.gitignore` evita subir el archivo por accidente. Se usa únicamente el token del challenge, que admite este uso de SPA.
+**¿Cómo ocultaste el token?** No basta con `.env`: las variables VITE_ son públicas. Por eso el token se llama AEROLAB_TOKEN, se lee sólo en la función de Netlify y nunca se importa desde React. La build fue revisada para verificar que no contiene ninguna de las dos credenciales.
 
 **¿Por qué CSS propio y HashRouter?** CSS evita otra biblioteca de estilos. HashRouter permite rutas en un hosting estático sin configurar reescrituras.
 

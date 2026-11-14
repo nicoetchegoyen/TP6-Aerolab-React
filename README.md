@@ -1,74 +1,67 @@
 # TP6 · Aerolab · Programación Avanzada 2024
 
-SPA con React, JavaScript, React Router, `fetch` y CSS. Vite inicia el entorno y genera los archivos de producción. No hay TypeScript, Redux ni backend propio. Los comentarios y `DEFENSA.md` explican las decisiones para el examen.
+SPA React con JavaScript, React Router y CSS. El token de Aerolab se conserva en una función de servidor de Netlify y no se incorpora al JavaScript público.
 
-## Empezar a practicar
+## Cómo funciona
 
-Requisito: Node.js 22.12 o posterior. Desde esta carpeta:
+1. React pide productos, usuario e historial a `/.netlify/functions/aerolab`.
+2. La función consulta Aerolab con `AEROLAB_TOKEN`, una variable privada del servidor.
+3. El catálogo y los detalles pueden consultarse públicamente.
+4. Para canjear o cargar puntos, el visitante debe ingresar una clave en **Acceso a canjes**. El servidor la compara con `AEROLAB_ACTION_KEY`. La clave no está en Git ni en la build.
+5. Después de cada operación, React vuelve a consultar el saldo real.
 
-```powershell
-npm install
-npm run dev:demo
-```
+Ocultar el token no bastaría si cualquiera pudiera modificar el saldo usando la función. Por eso los POST requieren la clave adicional. No es un sistema de usuarios completo: es un acceso compartido sencillo para la defensa del TP. Compartir la clave permite operar la cuenta del ejercicio; no publicarla en el repositorio.
 
-Abrir la dirección que muestra la terminal: normalmente `http://127.0.0.1:5173/`.
+## Ejecutar localmente
 
-El modo práctica usa productos ficticios, sin llamadas a Aerolab. El cartel lo identifica siempre. Saldo e historial viven en memoria y se reinician al recargar. No acredita integración con la API real.
+Requiere Node 22.12 o posterior. Ejecutar `npm install`. Copiar `.env.example` como `.env`, completar `AEROLAB_TOKEN` y `AEROLAB_ACTION_KEY`, y ejecutar `npm run dev`.
 
-## Conectar la API real
+La configuración de Vite incluye un adaptador local que ejecuta la misma función de Netlify. Los secretos se leen en Node y no se entregan a React. Para practicar sin API, `npm run dev:demo` usa datos ficticios claramente identificados.
 
-Actualización del 14/11/2026: el generador funcionó, se recibió el token y la integración real devolvió HTTP 200 en perfil, catálogo e historial. Se verificaron un canje de 150 puntos y una carga de 1000 puntos. Ver `PRUEBA-REAL.md` para la evidencia y el recorrido de defensa. Repositorio: [TP6-Aerolab-React](https://github.com/nicoetchegoyen/TP6-Aerolab-React). El despliegue público del sitio sigue pendiente.
+- `npm test`: contrato del cliente, validaciones del servidor y simulador.
+- `npm run probar:api`: consultas reales de sólo lectura a través de la función.
+- `npm run build`: genera los archivos públicos en `dist`.
+- `npm run preview`: sirve sólo los archivos estáticos; no emula las funciones. Para probar la API local usar `npm run dev`.
 
-1. Obtener un token propio siguiendo las instrucciones del challenge. La [documentación oficial](https://aerolabchallenge.docs.apiary.io/) indica entrar en [Aerolab](https://aerolab.co/coding-challenge), escribir `join` y completar el correo. El correo de bienvenida contiene el token; revisar también spam. La consigna de 2024 usa el dominio anterior `aerolab.us`.
-2. Copiar `.env.example` como `.env` y completar `VITE_AEROLAB_TOKEN` sin la palabra `Bearer`.
-3. Mantener `VITE_DEMO_MODE=false` y ejecutar `npm run dev`.
-4. Si se cambia `.env`, reiniciar el servidor. No subir el archivo con el token a GitHub.
+## Configuración en Netlify
 
-Para comprobar el acceso sin cambiar saldo ni hacer canjes, ejecutar `npm run probar:api`. El comando carga `.env`, consulta perfil, catálogo e historial, y muestra estados HTTP y cantidades sin imprimir el token.
+Importar [el repositorio](https://github.com/nicoetchegoyen/TP6-Aerolab-React), rama `main`. `netlify.toml` configura:
 
-Las variables `VITE_` se incluyen en el JavaScript del navegador: **no son secretos ocultos**. Se usa el token del ejercicio, cuyo uso en frontend está expresamente permitido por la documentación de Aerolab. No colocar contraseñas ni credenciales de otros servicios. Para un producto con secretos reales correspondería un servidor intermediario; no se agregó esa complejidad a este TP.
+- Build: `npm run build`.
+- Directorio publicado: `dist`.
+- Funciones: `netlify/functions`.
+- Node: 24; modo demo desactivado.
+
+Agregar `AEROLAB_TOKEN` y `AEROLAB_ACTION_KEY` en las variables de Netlify, disponibles para Functions. Marcarlas como secretas. No usar el prefijo `VITE_` para estas credenciales y no colocarlas en `netlify.toml`. Las variables declaradas sólo en ese archivo no llegan al entorno de ejecución de las funciones. Volver a desplegar después de cambiar variables.
 
 ## Cobertura de la consigna
 
-Fuente: `SPA - Aerolab.pdf`, tres páginas. Se distingue su pedido del material externo. El challenge actual de Aerolab trata sobre videojuegos: aquí se sigue el catálogo de recompensas de la consigna y la [rama histórica 2022](https://github.com/Aerolab/frontend-developer-coding-challenge/tree/2022), no el challenge nuevo.
+| Requisito | Implementación |
+| --- | --- |
+| SPA React | `main.jsx`, `App.jsx`, HashRouter |
+| Catálogo real completo | GET `/products` a través de la función; 32 productos verificados |
+| Otra ruta para el detalle | `#/productos/:id`; búsqueda por ID sobre el catálogo |
+| Token de validación | Sólo la función envía `Authorization: Bearer ...` a Aerolab |
+| Precio, saldo, faltante y canje | Tarjetas y detalle; POST `/redeem`, saldo e historial del servidor |
+| Carga de puntos | POST `/user/points`; sólo 1000, 5000 o 7500 |
+| Orden de precios | Ascendente y descendente, sin modificar los datos originales |
+| Diseño libre y responsive | CSS propio; imágenes provistas por Aerolab |
+| Historial, categorías y páginas | Implementados como mejoras de uso |
+| Enlace al código | Pie de página con el repositorio real |
+| Despliegue público | Registrar la URL y verificarla después de publicar |
 
-| Requisito | Código / comportamiento | Validación o pendiente |
-| --- | --- | --- |
-| SPA ReactJS | `main.jsx`, `App.jsx`, React Router | Compila |
-| Listado de todos los productos desde Aerolab | `GET /products`; filtros y páginas recorren el conjunto completo | Verificados 32 productos con la API real |
-| Detalle en otra ruta | `#/productos/:id`, `Detalle` en `App.jsx` | Probado en navegador. La API no documenta detalle individual: se usa `find` sobre el catálogo |
-| Token de validación | `Authorization: Bearer ...` en `api.js` | Token propio recibido y verificado con HTTP 200 |
-| Diseño libre y recursos | CSS propio responsive; usa las imágenes que entregue la API | La consigna permite diseño propio. No se recibió la carpeta original |
-| App accesible en producción | `npm run build`, rutas con hash y base relativa | Build aprobado; falta publicar y comprobar la URL real |
-| Mínimos del challenge: precio, saldo, orden de precios | Tarjetas, cabecera, select de orden | Implementados; interfaz comprobada en práctica |
-| Distinguir canjeables y faltantes | Mensaje de disponibilidad, diferencia de puntos y botón deshabilitado | Comprobado en práctica |
-| Canjear y descontar puntos | POST `/redeem`, después GET `/user/me`; bloqueo durante la solicitud | Canje real Kobo Aura: 2000 - 150 = 1850 puntos; historial confirmado |
-| Agregar puntos | POST `/user/points`, sólo 1000, 5000 o 7500 | Carga real autorizada: 1850 + 1000 = 2850 puntos |
-| Enlace al repositorio en el pie | `VITE_REPO_URL` | URL real incluida en `.env.example` |
-| Mejoras: categorías, páginas, historial, móvil | `Catalogo.jsx`, `Historial`, CSS | Implementadas y revisadas según `VERIFICACION.md` del directorio superior |
+La fuente es `SPA - Aerolab.pdf` (2024), más los mínimos del [challenge histórico de recompensas](https://github.com/Aerolab/frontend-developer-coding-challenge/tree/2022). No se sigue el nuevo challenge de videojuegos. El PDF permite diseño propio.
 
-No se inventan descripciones: el detalle muestra nombre, imagen, categoría, costo y disponibilidad que provee el catálogo.
+## Archivos para estudiar
 
-## Publicación y entrega
+- `src/App.jsx`: estado, rutas, operaciones, detalle e historial.
+- `src/Catalogo.jsx`: filtros, orden y páginas.
+- `src/Producto.jsx`: tarjeta e imagen.
+- `src/api.js`: solicitudes a la función; no contiene el token.
+- `netlify/functions/aerolab.mjs`: lista de rutas permitidas, clave de canjes, validación y solicitudes a Aerolab.
+- `vite.config.js`: entorno local y adaptador de la función.
+- `DEFENSA.md`: preguntas para el examen.
+- `PRUEBA-REAL.md`: resultados de integración.
+- `DESPLIEGUE.md`: explicación de publicación.
 
-Cada carpeta es un proyecto independiente: se puede subir sólo ésta a un repositorio nuevo. Si se sube toda la carpeta de la materia a un único repo, seleccionar `tp6-aerolab` como directorio base en el hosting.
-
-1. Crear el repositorio en GitHub y subir el código, incluidos `package.json` y `package-lock.json`, sin `node_modules`, `dist` ni `.env`.
-2. Completar `VITE_REPO_URL` con el enlace real del repositorio.
-3. En Netlify seleccionar el repo, comando `npm run build`, directorio publicado `dist` y Node 24 (o compatible).
-4. Configurar allí `VITE_AEROLAB_TOKEN`, `VITE_DEMO_MODE=false` y `VITE_REPO_URL`. Ejecutar un nuevo despliegue después de cambiar variables.
-5. Abrir la URL pública y comprobar catálogo, ruta directa/recarga del detalle, saldo, canje e historial. Usar el token del ejercicio.
-6. Registrar el enlace del despliegue. El código está en [GitHub](https://github.com/nicoetchegoyen/TP6-Aerolab-React); todavía falta publicar el sitio.
-
-Para revisar producción en tu computadora: `npm run build` y después `npm run preview`. Para repetir las pruebas del servicio: `npm test`. El Classroom está archivado: confirmar con el profesor dónde presentar hoy.
-
-## Estructura para estudiar
-
-- `main.jsx`: punto de entrada y router.
-- `App.jsx`: carga inicial, saldo, acciones, rutas, detalle e historial.
-- `Catalogo.jsx`: categoría, orden y paginación local.
-- `Producto.jsx`: tarjeta e imagen reutilizable.
-- `api.js`: solicitudes HTTP y mensajes de error.
-- `demo.js`: simulación explícita para practicar.
-- `styles.css`: presentación y adaptación a pantallas.
-- `tests/api.test.mjs`: contrato de red y reglas del simulador, sin credenciales reales.
+El archivo `.env`, `node_modules` y `dist` están excluidos de Git. La clave de canjes se mantiene sólo en memoria de la pestaña que la ingresa: hay que volver a escribirla al recargar.
