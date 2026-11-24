@@ -4,6 +4,11 @@ SPA React con JavaScript, React Router y CSS. El token de Aerolab se conserva en
 
 **Web pública:** https://tp6-aerolab-nicoetchegoyen.netlify.app/
 
+**Práctica explícita:** https://tp6-aerolab-nicoetchegoyen.netlify.app/?practica=1#/
+Usa datos ficticios y saldo e historial en memoria; se reinician al recargar. No acredita operaciones contra la API real.
+
+El 24/11/2026 se detectaron respuestas inválidas del servicio externo: catálogo `{}` y HTTP 500 en perfil e historial. El token propio no tiene vencimiento declarado; un token inválido devuelve 403. El generador oficial envió `Token: null` al intentar recuperar acceso. Se conserva la credencial anterior y no se cambia a práctica automáticamente. El servidor detecta esas respuestas y presenta un mensaje de indisponibilidad.
+
 ## Cómo funciona
 
 1. React pide productos, usuario e historial a `/.netlify/functions/aerolab`.

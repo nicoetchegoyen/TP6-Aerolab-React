@@ -185,7 +185,7 @@ export default function App() {
       {modoDemo && (
         <div className="demo-banner">
           MODO PRÁCTICA · Datos ficticios. Los puntos y canjes se reinician al
-          recargar.
+          recargar. <a href="./#/">Volver a probar la API real</a>
         </div>
       )}
       <header className="site-header">
@@ -283,11 +283,12 @@ export default function App() {
             <p>{error}</p>
             {!modoDemo && (
               <p>
-                Revisá la configuración del servidor según el README, o iniciá
-                con <code>npm run dev:demo</code> para practicar.
+                Podés reintentar la conexión o explorar el modo de práctica con
+                datos ficticios. La práctica no modifica tu cuenta de Aerolab.
               </p>
             )}
             <button onClick={() => setIntento(intento + 1)}>Reintentar</button>
+            {!modoDemo && <p><a href="./?practica=1#/">Probar con datos de práctica</a></p>}
           </section>
         ) : !usuario ? (
           <p className="notice" role="status">

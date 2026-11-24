@@ -81,11 +81,29 @@ export async function handler(event) {
       body: esEscritura ? JSON.stringify(datos) : undefined,
       signal: AbortSignal.timeout(15000),
     });
+    if (respuesta.status >= 500)
+      return responder(503, {
+        message: "El servicio de Aerolab no está disponible temporalmente. Volvé a intentar más tarde.",
+      });
     if (!respuesta.ok)
       return responder(respuesta.status, {
         message: `Aerolab rechazó la operación (HTTP ${respuesta.status}).`,
       });
-    return responder(200, await respuesta.json());
+    const resultado = await respuesta.json();
+    // Aerolab puede devolver HTTP 200 con {} durante una falla interna.
+    // Detectarlo antes de que React intente usar productos o un saldo inexistente.
+    if (esLectura) {
+      const valido = ruta === "/products"
+        ? Array.isArray(resultado) && resultado.length > 0 && resultado.every(p =>
+          p && typeof p._id === "string" && typeof p.name === "string" && Number.isFinite(p.cost))
+        : ruta === "/user/history"
+          ? Array.isArray(resultado)
+          : resultado && typeof resultado.name === "string" && Number.isFinite(resultado.points);
+      if (!valido) return responder(503, {
+        message: "Aerolab respondió sin los datos necesarios. Su servicio puede estar temporalmente fuera de servicio.",
+      });
+    }
+    return responder(200, resultado);
   } catch {
     // No devolver excepciones ni cabeceras con datos internos.
     return responder(502, {

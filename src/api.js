@@ -1,6 +1,8 @@
 import { consultarDemo } from "./demo.js";
 
-export const modoDemo = import.meta.env.VITE_DEMO_MODE === "true";
+// La práctica sólo se activa por elección explícita; nunca por un error de la API.
+export const modoDemo = import.meta.env.VITE_DEMO_MODE === "true" ||
+  (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("practica") === "1");
 let claveCanjes = "";
 // La clave se escribe en la interfaz y vive sólo en memoria de esta pestaña.
 export function guardarClaveCanjes(clave) {

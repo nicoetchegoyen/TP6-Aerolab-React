@@ -15,7 +15,7 @@ test("Servidor: oculta credenciales y rechaza rutas, claves y datos inválidos a
   let llamadas = [];
   globalThis.fetch = async (url, opciones) => {
     llamadas.push({ url, opciones });
-    return Response.json({ points: 2850 });
+    return Response.json({ name: "Perfil de prueba", points: 2850 });
   };
   try {
     const lectura = await handler(peticion("/user/me"));
@@ -85,6 +85,16 @@ test("Servidor: oculta credenciales y rechaza rutas, claves y datos inválidos a
     );
     assert.deepEqual(JSON.parse(llamadas[0].opciones.body), { amount: 1000 });
     assert.ok(!JSON.stringify(carga).includes("clave-privada-de-prueba"));
+    globalThis.fetch = async () => Response.json({});
+    assert.equal((await handler(peticion("/products"))).statusCode, 503);
+    assert.equal((await handler(peticion("/user/me"))).statusCode, 503);
+    assert.equal((await handler(peticion("/user/history"))).statusCode, 503);
+    globalThis.fetch = async () => Response.json({ error: "Internal Server Error" }, { status: 500 });
+    const caida = await handler(peticion("/user/me"));
+    assert.equal(caida.statusCode, 503);
+    assert.match(JSON.parse(caida.body).message, /no está disponible temporalmente/);
+    globalThis.fetch = async () => Response.json({ message: "Failed to authenticate token." }, { status: 403 });
+    assert.equal((await handler(peticion("/user/me"))).statusCode, 403);
     globalThis.fetch = async () => {
       throw new Error("error interno con token-privado-de-prueba");
     };
